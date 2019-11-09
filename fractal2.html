@@ -1,0 +1,103 @@
+<html>
+<body>
+<form>
+<p>
+<input type="number", min="1" id="input">
+    <input type="button" value="submit" onClick="checkNum()">
+    </p>
+    </form>
+    <canvas id="canvas" width="1600" height="800" ></canvas>
+    <script type="text/javascript">
+var elem = document.getElementById('canvas');
+var context = elem.getContext('2d');
+context.backgroundColor = '#200';
+context.lineWidth = 1;
+
+var deg_to_rad = Math.PI / 180.0;
+var depth = 0;
+var checkNum = function() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    var depth = document.getElementById('input').value;
+
+    if(depth==1){
+        drawDefault(400,600,1000,600,-90,depth);
+    }
+    else drawSet(400,600,1000,600,-90,depth);
+
+
+
+};
+function deleteLine(x1, y1, x2, y2, brightness){
+
+    context.beginPath();
+    context.strokeStyle = '#fff';
+
+    context.moveTo(x1, y1);
+    context.lineTo(x2, y2);
+    context.closePath();
+    context.stroke();
+
+}
+
+function drawLine(x1, y1, x2, y2, brightness){
+    context.beginPath();
+    context.strokeStyle = '#0000ff';
+    context.moveTo(x1, y1);
+    context.lineTo(x2, y2);
+    context.closePath();
+    context.stroke();
+}
+function drawDefault(x1, y1, x2,y2, angle, depth){
+    var ax =x1;
+    var ay =y1;
+    var mx = (x1+x2)/2;
+    var my = (y1+y2)/2;
+    var bx = ax+((mx-ax)*11)/12;
+    var by = ay+((my-ay)*11)/12;
+    var dx = mx+(x2-mx)/12;
+    var dy = my+(y2-my)/12;
+    var l=Math.sqrt(Math.pow((dx-mx),2)+Math.pow((dy-my),2));
+    var cx= mx+l*(Math.tan(85*deg_to_rad))*(Math.cos(angle*deg_to_rad));
+    var cy= my+l*(Math.tan(85*deg_to_rad))*(Math.sin(angle*deg_to_rad));
+    var ex =x2;
+    var ey =y2;
+
+    drawLine(ax, ay, bx, by, depth);
+    drawLine(bx, by, cx, cy, depth);
+    drawLine(cx, cy, dx, dy, depth);
+    drawLine(dx, dy, ex, ey, depth);
+    
+}
+
+function drawSet(x1, y1, x2,y2, angle, depth){
+    var ax =x1;
+    var ay =y1;
+    var mx = (x1+x2)/2;
+    var my = (y1+y2)/2;
+    var bx = ax+((mx-ax)*11)/12;
+    var by = ay+((my-ay)*11)/12;
+    var dx = mx+(x2-mx)/12;
+    var dy = my+(y2-my)/12;
+    var l=Math.sqrt(Math.pow((dx-mx),2)+Math.pow((dy-my),2));
+    var cx= mx+l*(Math.tan(85*deg_to_rad))*(Math.cos(angle*deg_to_rad));
+    var cy= my+l*(Math.tan(85*deg_to_rad))*(Math.sin(angle*deg_to_rad));
+    var ex =x2;
+    var ey =y2;
+
+    if (depth !== 1){
+
+
+        drawSet(ax,ay,bx,by,angle,depth-1);
+        drawSet(bx,by,cx,cy,angle-85,depth-1);
+        drawSet(cx,cy,dx,dy,angle+85,depth-1);
+        drawSet(dx,dy,ex,ey,angle,depth-1);
+
+    }
+    else {drawLine(ax, ay, bx, by, depth);
+        drawLine(bx, by, cx, cy, depth);
+        drawLine(cx, cy, dx, dy, depth);
+        drawLine(dx, dy, ex, ey, depth);}
+}
+</script>
+</body>
+</html>
