@@ -1,0 +1,474 @@
+<html>
+<body>
+
+<input type="number" id="x" , min="1" , placeholder="X">
+<input type="number" id="y" , min="1" , placeholder="Y">
+<input type="button" value="Save/Show" onclick="save();">
+<input type="button" value="drawPolygon" onclick="polygon()">
+<input type="button" value="result" onclick="result()">
+<input type="button" value="doClear" onclick="doClear()"/>
+
+
+<br>
+<canvas id="canvas" width="1600" height="1200"></canvas>
+
+
+<script type="text/javascript">
+    var elem = document.getElementById('canvas');
+    var context = elem.getContext('2d');
+    context.fillStyle = '#000';
+    context.lineWidth = 1;
+    var myArray = new Array();
+    var term = 0;
+
+
+    function polygon(){
+      term=0;
+      var size = myArray.length;
+      var num=0;
+      var check1 = checkPolygon1(myArray,size);
+      var check2 = checkPolygon2(myArray,size);
+      if(check1==true&&check2==true) {
+        for (var i = 0; i < size; i++) {
+          if (i == size - 1) {
+            var x1 = myArray[i][0];
+            var y1 = myArray[i][1];
+            var x2 = myArray[0][0];
+            var y2 = myArray[0][1];
+            drawLine(x1, y1, x2, y2, 2);
+            context.fillText(num,x1,y1);
+            num = num+1;
+          } else {
+            var x1 = myArray[i][0];
+            var y1 = myArray[i][1];
+            var x2 = myArray[i + 1][0];
+            var y2 = myArray[i + 1][1];
+            drawLine(x1, y1, x2, y2, 2);
+            context.fillText(num,x1,y1);
+            num = num+1;
+          }
+
+        }
+      }
+      else {
+          context.fillText("it's not polygon",500,500);
+
+      }
+    }
+
+    function checkPolygon1(array,n) {
+      for(i=0;i<n;i++){
+        if(i==n-1) {
+          var a2 = (array[0][1] - array[i][1]) / (array[0][0] - array[i][0]);
+          var a1 = (array[1][1] - array[0][1]) / (array[1][0] - array[0][0]);
+          if (a2 ==a1) {
+            return false;
+          }
+        }
+        else if(i==n-2){
+          var a2 = (array[i + 1][1] - array[i][1]) / (array[i + 1][0] - array[i][0]);
+          var a1 = (array[0][1] - array[i + 1][1]) / (array[0][0] - array[i + 1][0]);
+          if (a2 == a1){
+            return false;
+          }
+
+        }
+        else {
+          var a2=(array[i+1][1]-array[i][1])/(array[i+1][0]-array[i][0]);
+          var a1= (array[i+2][1]-array[i+1][1])/(array[i+2][0]-array[i+1][0]);
+          if(a2==a1){
+            return false;
+          }
+        }
+      }
+      return true;
+
+    }
+    function checkPolygon2(array,n) {
+      var term1 =0;
+      var term2 =0;
+      var term3 =0;
+      var term4 =0;
+      var i;
+      for(i=0;i<n-2;i++){
+        if (i>0) {
+          var a = array[i][0];
+          var b = array[i][1];
+          var c = array[i + 1][0];
+          var d = array[i + 1][1];
+          var e = array[n - 1][0];
+          var f = array[n - 1][1];
+          var g = array[0][0];
+          var h = array[0][1];
+          var u = parseFloat((d - b) / (c - a));
+          var v = parseFloat((h - f) / (g - e));
+          var key;
+          if (u == Infinity || u == -Infinity) {
+            key = (h - f) * (a - e) / (g - e) + f;
+            if ((b <= key) && (key <= d) || (key <= b) && (d <= key)) {
+
+              return false;
+            }
+
+
+          } else if (v == Infinity || v == -Infinity) {
+            key = (d - b) * (e - a) / (c - a) + b;
+            if ((f <= key) && (key <= h) || (key <= f) && (h <= key)) {
+              return false;
+            }
+          } else {
+            key = parseFloat((-b + f + a * u - e * v) / (u - v));
+            if (a <= key && key <= c || key <= a && c <= key) {
+              var t1 = parseFloat((d - b) * (e - a) - (c - a) * (f - b));
+              var t2 = parseFloat((d - b) * (g - a) - (c - a) * (h - b));
+              var k = parseFloat(t1 * t2);
+              if (k <= 0) {
+                return false;
+              }
+            }
+
+          }
+        }
+        var j;
+          for (j=i; j < n-3; j++) {
+            var a = parseFloat(array[i][0]);
+            var b = parseFloat(array[i][1]);
+            var c = parseFloat(array[i + 1][0]);
+            var d = parseFloat(array[i + 1][1]);
+            var e = parseFloat(array[j +2][0]);
+            var f = parseFloat(array[j +2][1]);
+            var g = parseFloat(array[j+3][0]);
+            var h = parseFloat(array[j+3][1]);
+            var u = (d - b) / (c - a);
+            var v = (h - f) / (g - e);
+            var key;
+            if(u==Infinity||u==-Infinity){
+              key=(h-f)*(a-e)/(g-e)+f;
+              if ((b <= key) && (key <= d) || (key <= b) && (d <= key)) {
+                return false;
+              }
+
+
+            }
+            else if(v==Infinity||v==-Infinity){
+              key=(d-b)*(e-a)/(c-a)+b;
+              if ((f <= key) && (key <= h) || (key <= f) && (h <= key)) {
+                return false;
+              }
+            }
+            else {
+              key = (-b + f + a * u - e * v) / (u - v);
+              if ((a <= key) && (key <= c) || (key <= a) && (c <= key)) {
+                var t1 = (d - b) * (e - a) - (c - a) * (f - b);
+                var t2 = (d - b) * (g - a) - (c - a) * (h - b);
+                var k = t1 * t2;
+                if (k <= 0) {
+                    return false;
+                }
+              }
+            }
+
+          }
+
+      }
+      return true;
+    }
+
+    function checkPolygon3(array,n) {
+      var term1 =0;
+      var term2 =0;
+      var term3 =0;
+      var term4 =0;
+      var i;
+      for(i=0;i<n-2;i++){
+        if (i>0) {
+          var a = array[i][0];
+          var b = array[i][1];
+          var c = array[i + 1][0];
+          var d = array[i + 1][1];
+          var e = array[n - 1][0];
+          var f = array[n - 1][1];
+          var g = array[0][0];
+          var h = array[0][1];
+          var u = parseFloat((d - b) / (c - a));
+          var v = parseFloat((h - f) / (g - e));
+          var key = parseFloat((-b + f + a * u - e * v) / (u - v));
+
+          if (a <= key && key <= c || key <= a && c <= key) {
+            var t1 = parseFloat((d - b)*(e - a) - (c - a)*(f - b));
+            var t2 =  parseFloat((d - b)*(g - a) - (c - a)*(h - b));
+            var k =  parseFloat(t1 * t2);
+            if (k<=0) {
+              return false;
+            }
+          }
+
+        }
+        var j;
+        for (j=i; j < n-3; j++) {
+           var a = parseFloat(array[i][0]);
+          var b = parseFloat(array[i][1]);
+          var c = parseFloat(array[i + 1][0]);
+          var d = parseFloat(array[i + 1][1]);
+          var e = parseFloat(array[j +2][0]);
+          var f = parseFloat(array[j +2][1]);
+          var g = parseFloat(array[j+3][0]);
+          var h = parseFloat(array[j+3][1]);
+          var u = (d - b) / (c - a);
+          var v = (h - f) / (g - e);
+          var key = (-b + f + a * u - e * v) / (u - v);
+
+          if ((a <= key) && (key <= c) || (key <= a) && (c <= key)) {
+
+            var t1 = (d - b)*(e - a) - (c - a)*(f - b);
+            var t2 = (d - b)*(g - a) - (c - a)*(h - b);
+            var k = t1 * t2;
+            if (k <= 0) {
+                return false;
+            }
+          }
+
+        }
+      }
+
+
+      return true;
+
+
+
+    }
+
+
+    function result() {
+
+      var size = myArray.length;
+
+
+      drawDiagonal(myArray,size);
+
+
+
+
+
+    }
+
+    function drawDiagonal(array,n) {
+
+      if(n==3){
+        return 0;
+      }
+
+      else {
+        var subarray;
+
+        for (var i = 0; i < n; i++) {
+          if (i == n - 2) {
+            subarray = new Array(n - 1);
+            for (var v = 0; v < subarray.length; v++) {
+              subarray[v] = new Array(2);}
+              for (var j = 0; j < n - 1; j++) {
+                subarray[j][0] = array[j][0];
+                subarray[j][1] = array[j][1];
+              }
+
+              var checking1 = checkPolygon1(subarray, subarray.length);
+              var checking2 = checkPolygon3(subarray, subarray.length);
+
+              if (checking1 == true && checking2 == true) {
+                var crossNum1 = checkCross(subarray,array[i+1][0],array[i+1][1]);
+                var check = checkInner(subarray,array[i],array[i+1],array[0],i);
+
+                if((parseInt(crossNum1%2)==0)&&(check==true)) {
+                  drawLine(array[i][0], array[i][1], array[0][0], array[0][1], 2);
+                  break;
+                }
+              }
+
+          } else if (i == n - 1) {
+            subarray = new Array(n - 1);
+            for (var v = 0; v < subarray.length; v++) {
+              subarray[v] = new Array(2);}
+              for (var j = 1; j < n; j++) {
+                subarray[j - 1][0] = array[j][0];
+                subarray[j - 1][1] = array[j][1];
+              }
+              var checking1 = checkPolygon1(subarray,subarray.length);
+              var checking2 = checkPolygon3(subarray,subarray.length);
+
+              if(checking1==true&&checking2==true){
+                var crossNum = checkCross(subarray,array[0][0],array[0][1]);
+
+                if((parseInt(crossNum%2)==0)) {
+                  drawLine(array[i][0], array[i][1], array[1][0], array[1][1], 2);
+                  break;
+                }
+              }
+
+          } else {
+              var newArray = array;
+
+              var subarray1 = newArray.slice(i+2)
+              var subarray2 = newArray.slice(0,i+1);
+              subarray = subarray2.concat(subarray1);
+              var l;
+
+
+              var checking1 = checkPolygon1(subarray,subarray.length);
+              var checking2 = checkPolygon3(subarray,subarray.length);
+
+              //subarray1 : array[i] , array[i+1], array[i+2] => 이건 필요없음.
+              //subarray2 : array[i+2] ~ array[n-1], array[0]~array[i]
+              if(checking1==true&&checking2==true) {
+                //다음 어레이가 폴리건이 되는지 체크
+                var crossNum1 = checkCross(subarray,array[i+1][0],array[i+1][1]);
+                // i  , i+1 , i+2 로 삼각형 만들기나머지 점들
+                var check = checkInner(subarray,array[i],array[i+1],array[i+2],i);
+                //교점수가 짝수면 그 다음 폴리건 밖에 있으므로 대각선 그음
+
+                //삼각형을 만들어서 그외에 점들을 다 삼각형에 대해 반직선을 그어 하나가 나오면 안에있으므로 그으면안됨.
+                if((parseInt(crossNum1%2)==0)&&(check==true)) {
+                  drawLine(array[i][0], array[i][1], array[i + 2][0], array[i + 2][1], 2);
+                  break;
+                }
+              }
+
+          }
+
+        }
+        drawDiagonal(subarray, subarray.length);
+
+
+      }
+    }
+    function checkInner(array,a,b,c,i) {
+      //array : subarray[2]~[n-1], a,b,c 는 삼각형 좌표
+
+
+      for(var h=0; h<array.length;h++) {
+        var x = array[h][0];
+        var y = array[h][1];
+        var x1 = a[0];
+        var y1 = a[1];
+        var x2 = b[0];
+        var y2 = b[1];
+        var x3 = c[0];
+        var y3 = c[1];
+        if (h == i) {
+
+        } else if (h == i + 1) {
+
+        } else {
+            var q;
+            var w;
+            var e;
+            //ab x at , at x ac // bc x bt ,bt x ba // ca x ct , ct x cb
+
+            q= ((x2-x1)*(y-y1)-(x-x1)*(y2-y1))* ((x-x1)*(y3-y1)-(x3-x1)*(y-y1));
+            w= ((x3-x2)*(y-y2)-(x-x2)*(y3-y2))* ((x-x2)*(y1-y2)-(x1-x2)*(y-y2));
+            e= ((x2-x3)*(y-y3)-(x-x3)*(y2-y3))* ((x-x3)*(y1-y3)-(x1-x3)*(y-y3));
+
+            if(q>0&&w>0&&e>0){
+                return false;
+            }
+
+
+        }
+
+      }
+      return true;
+    }
+    function checkCross(array,x,y) {
+      var n=array.length;
+        var save =[[0,0]];
+      var count=0;
+      var i;
+      for(i=0;i<n;i++){
+        if(i==n-1){
+          var x1 = array[i][0];
+          var x2 = array[0][0];
+          var y1 = array[i][1];
+          var y2 = array[0][1];
+          if(y1<=y&&y<=y2||y<=y1&&y2<=y){
+              if(y==y1&&y==y2){
+              }
+              else {
+                  var key = (y - y1) * (x2 - x1) / (y2 - y1) + x1;
+                  var key2 = (y2-y1)*(key-x1)/(x2-x1)+y1;
+
+                  if (x < key) {
+                      if(save[0][0]==key&&save[0][1]==key2){
+                          save[0][0]=0;
+                          save[0][1]=0;
+
+                      }
+                      else{
+                          count = count + 1;
+                          save[0][0]=key;
+                          save[0][1]=key2;}
+                  }
+              }
+
+          }
+
+        }
+        else{
+          var x1 = array[i][0];
+          var x2 = array[i+1][0];
+          var y1 = array[i][1];
+          var y2 = array[i+1][1];
+          if(y1<=y&&y<=y2||y<=y1&&y2<=y){
+            if(y==y1&&y==y2){
+            }
+            else {
+              var key = (y - y1) * (x2 - x1) / (y2 - y1) + x1;
+              var key2 = (y2-y1)*(key-x1)/(x2-x1)+y1;
+
+              if (x < key) {
+                  if(save[0][0]==key&&save[0][1]==key2){
+
+                  }
+                  else{
+                      count = count + 1;
+                      save[0][0]=key;
+                      save[0][1]=key2;}
+              }
+            }
+          }
+        }
+      }
+      return count;
+
+    }
+    function drawLine(x1, y1, x2, y2, brightness){
+      context.beginPath();
+      context.strokeStyle = '#0000ff';
+      context.moveTo(x1, y1);
+      context.lineTo(x2, y2);
+      context.closePath();
+      context.stroke();
+    }
+
+    function doClear() {
+      context.clearRect(0, 0, canvas.width, canvas.height) ;
+      term=0;
+      myArray=[];
+    }
+
+
+    function save() {
+       var a = document.getElementById("x").value;
+       var b = document.getElementById("y").value;
+
+       if (a >0 && b >0) {
+           myArray.push([a*10, b*10]);
+           term = term + 100;
+           context.fillText("(" + a*10 + " , " + b*10 + ")", term, 30);
+       }
+
+   };
+
+
+
+</script>
+</body>
+</html>
