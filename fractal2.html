@@ -15,6 +15,16 @@ context.lineWidth = 1;
 
 var deg_to_rad = Math.PI / 180.0;
 var depth = 0;
+
+context.font = "20px Georgia";
+context.fillText("How to run",100,100);
+context.fillText("1. Write a depth number.", 100, 200);
+context.fillText("2. Click 'submit' button to print the fractal.",100,300);
+context.fillText("# If you want to reset, just put new depth and click the 'submit'button.",100,400);
+
+
+
+
 var checkNum = function() {
     context.clearRect(0, 0, canvas.width, canvas.height);
     var depth = document.getElementById('input').value;
@@ -66,7 +76,7 @@ function drawDefault(x1, y1, x2,y2, angle, depth){
     drawLine(bx, by, cx, cy, depth);
     drawLine(cx, cy, dx, dy, depth);
     drawLine(dx, dy, ex, ey, depth);
-    
+
 }
 
 function drawSet(x1, y1, x2,y2, angle, depth){

@@ -11,16 +11,28 @@
 var elem = document.getElementById('canvas');
 var context = elem.getContext('2d');
 
-context.fillStyle = '#C0C0C0';
+//context.fillStyle = '#C0C0C0';
 context.lineWidth = 1;
 context.strokeStyle = '#0000ff';
 
 var deg_to_rad = Math.PI / 180.0;
 var depth = 0;
-var checkNum = function() {
-      context.clearRect(0, 0, canvas.width, canvas.height);
-			var depth = document.getElementById('input').value;
 
+context.font = "20px Georgia";
+
+    context.fillText("How to run",100,100);
+    context.fillText("1. Write a depth number more than 1.", 100, 200);
+    context.fillText("2. Click 'submit' button to print the fractal.",100,300);
+    context.fillText("# If you want to reset, just put new depth and click the 'submit'button.",100,400);
+
+
+var checkNum = function() {
+
+      context.clearRect(0, 0, canvas.width, canvas.height);
+         var depth = document.getElementById('input').value;
+
+
+      context.fillStyle = '#C0C0C0';
       context.beginPath();
       drawRect(400, 300, 0, 120, depth);
       drawRect(400, 300, 90, 120, depth);
